@@ -191,6 +191,34 @@ export const ButtonPag = styled.button.attrs({
     }
 `;
 
+export const ButtonLink = styled.button.attrs({
+  type: 'button',
+})`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+    align-self: flex-start;
+    font-weight: bold;
+    background: #40c8f4;
+    padding: 5px;
+    border-radius: 5px;
+    border: none;
+
+    &:hover{
+      background-color:#40c8f4;
+    }
+
+    svg{
+      color: #fff;
+    }  
+
+    &[disabled]{
+      background-color:#40c8f455;
+      cursor: not-allowed;
+    }
+`;
+
 export const Bg = styled.div`
   min-height: 100vh;
   width: 100vw;

@@ -8,7 +8,7 @@ import { FaPencilAlt } from 'react-icons/fa';
 
 import { useHistory, Link } from 'react-router-dom';
 import {
-  Container, List, ButtonPag, Bg, Modal, ButtonOpt, Cell,
+  Container, List, ButtonPag, Bg, Modal, ButtonOpt, Cell, ButtonLink,
 } from './style';
 import api from '../../services/api';
 
@@ -142,10 +142,10 @@ export default function Lista({ match }) {
           Voltar
           </Link>
 
-          <Link to="/atividade/create">
+          <ButtonLink onClick={() => history.push('/atividade/create', { projetos })}>
             Nova Atividade
             <IoIosAdd size={30} />
-          </Link>
+          </ButtonLink>
         </div>
 
 
