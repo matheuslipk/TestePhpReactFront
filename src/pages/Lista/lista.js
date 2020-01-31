@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import {
-  IoIosArrowBack, IoIosArrowForward, IoMdTrash, IoMdMore, IoIosArrowRoundBack,
+  IoIosArrowBack, IoIosArrowForward, IoMdTrash, IoMdMore,
+  IoIosArrowRoundBack, IoIosAdd,
 } from 'react-icons/io';
+
 import { FaPencilAlt } from 'react-icons/fa';
 
 import { useHistory, Link } from 'react-router-dom';
@@ -44,6 +46,7 @@ function ButtomBack(props) {
 
 export default function Lista({ match }) {
   const [lista, setLista] = useState([]);
+  const [projetos, setProjetos] = useState([]);
   const [page, setPage] = useState(1);
   const [lastPage, setlastPage] = useState(1);
   const [perPage, setPerPage] = useState(10);
@@ -78,6 +81,21 @@ export default function Lista({ match }) {
     setPerPage(Number.parseInt(e.target.value, 10));
     localStorage.setItem('perPage', e.target.value);
   }
+
+  function getProjectById(id) {
+    for (let i = 0; i < projetos.length; i += 1) {
+      if (projetos[i].id === id) {
+        return projetos[i];
+      }
+    }
+    return null;
+  }
+
+  useEffect(() => {
+    api.get('projeto').then((response) => {
+      setProjetos(response.data);
+    });
+  }, []);
 
   useEffect(() => {
     api.get(`atividade?page=${page}&limit=${perPage}`).then((response) => {
@@ -118,10 +136,19 @@ export default function Lista({ match }) {
         </div>
       </Modal>
       <Container>
-        <Link to="/login">
-          <IoIosArrowRoundBack size={30} />
+        <div className="header">
+          <Link to="/login">
+            <IoIosArrowRoundBack size={30} />
           Voltar
-        </Link>
+          </Link>
+
+          <Link to="/atividade/create">
+            Nova Atividade
+            <IoIosAdd size={30} />
+          </Link>
+        </div>
+
+
         <h1>Listade Atividades</h1>
 
         <div className="animation">
@@ -144,24 +171,30 @@ export default function Lista({ match }) {
             </Cell>
           </li>
           {
-            lista.map((at) => (
-              <li key={at.id}>
-                <Cell flex={1} onClickCapture={() => handleEdit(at.id)}>{at.id}</Cell>
-                <Cell flex={3}>{at.descricao}</Cell>
-                <Cell flex={3}>{at.dataCadastro}</Cell>
-                <Cell flex={2}>{at.idProjeto}</Cell>
-                <Cell flex={1}>
-                  <ButtonOpt background="#00f">
-                    <FaPencilAlt size={18} />
-                  </ButtonOpt>
-                  <ButtonOpt background="#f00" onClick={() => handleOpenModalDelete(at.id)}>
-                    <IoMdTrash size={22} />
-                  </ButtonOpt>
-                </Cell>
+            lista.map((at) => {
+              const projeto = getProjectById(at.idProjeto);
+              return (
+                <li key={at.id}>
+                  <Cell flex={1} onClickCapture={() => handleEdit(at.id)}>{at.id}</Cell>
+                  <Cell flex={3}>{at.descricao}</Cell>
+                  <Cell flex={3}>{at.dataCadastro}</Cell>
+                  <Cell flex={2}>{projeto && projeto.descricao}</Cell>
+                  <Cell flex={1}>
+                    <ButtonOpt
+                      background="#00f"
+                      onClick={() => history.push(`/atividade/update/${at.id}`, { atividade: at, projetos })}
+                    >
+                      <FaPencilAlt size={18} />
+                    </ButtonOpt>
+                    <ButtonOpt background="#f00" onClick={() => handleOpenModalDelete(at.id)}>
+                      <IoMdTrash size={22} />
+                    </ButtonOpt>
+                  </Cell>
 
 
-              </li>
-            ))
+                </li>
+              );
+            })
           }
         </List>
 

@@ -18,10 +18,18 @@ export const Container = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
-    color: #40c8f4;
+    color: #fff;
     align-self: flex-start;
     font-weight: bold;
+    background: #40c8f4;
+    padding: 5px;
+    border-radius: 5px;
     }
+
+  >.header{
+    display: flex;
+    justify-content: space-between;
+  }
 
   >div{
     display: flex;
