@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 export const Container = styled.div`
   border: 1px solid #ccc;
@@ -23,13 +23,11 @@ export const Container = styled.div`
     font-weight: bold;
     }
 
-  div{
+  >div{
     display: flex;
     align-items: center;
     justify-content: center;
     margin: 20px 0;
-
-    
 
     label{
       color: #999;
@@ -96,18 +94,12 @@ export const List = styled.ul`
     flex-direction: row;
     justify-content: space-around;
     align-items: center;
-    margin-top: 20px;
-
-    & + li:hover{
-      cursor: pointer;
-      background-color: #ddd;
-    }
+    padding: 0;
 
     span{
       flex: 1;
       color: #888;
       font-size: 12px;
-      padding: 10px 0;
       text-align: center;
 
       & + span{
@@ -119,39 +111,54 @@ export const List = styled.ul`
       }
     }
 
-    button{
-      display: flex;
-      background-color: #f008;
-      border: none;
-      padding: 3px;
-      border-radius: 3px;
-
-      svg{
-        color: #fff;
-      }
-
-      &:hover{
-        background-color: #f00;
-      }
-
-      &[disabled]{
-        opacity: 100%;
-        background-color:#eee;
-        cursor: auto;
-        svg{
-          color: #999;
-        }
-      }
-
-    }
-
     &+li{
       border-top: 1px solid #ddd;
-      padding-top: 5px;
-      margin-top: 5px;
     }
   }
+`;
 
+export const Cell = styled.div`
+  display: flex;
+  ${(props) => props.flex && css`
+    flex: ${props.flex};
+  `};
+  color: #888;
+  font-size: 12px;
+  padding: 10px 0;
+  text-align: center;
+  justify-content: center;
+
+  @media(max-width: 800px){
+    font-size: 11px;
+  }
+`;
+
+export const ButtonOpt = styled.button.attrs({
+  type: 'button',
+})`
+  display: flex;
+  background-color:${(props) => `${props.background}7`};
+  border: none;
+  padding: 3px;
+  border-radius: 3px;
+  margin-left: 2px;
+
+  svg{
+    color: #fff;
+  }
+
+  &:hover{
+    background-color: ${(props) => `${props.background}`};
+  }
+
+  &[disabled]{
+    opacity: 100%;
+    background-color:#eee;
+    cursor: auto;
+    svg{
+      color: #999;
+    }
+  }
 `;
 
 export const ButtonPag = styled.button.attrs({

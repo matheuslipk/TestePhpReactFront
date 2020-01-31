@@ -2,10 +2,13 @@ import React, { useEffect, useState } from 'react';
 import {
   IoIosArrowBack, IoIosArrowForward, IoMdTrash, IoMdMore, IoIosArrowRoundBack,
 } from 'react-icons/io';
+import { FaPencilAlt } from 'react-icons/fa';
+
 import { useHistory, Link } from 'react-router-dom';
 import {
-  Container, List, ButtonPag, Bg, Modal,
+  Container, List, ButtonPag, Bg, Modal, ButtonOpt, Cell,
 } from './style';
+import api from '../../services/api';
 
 function ButtomNext(props) {
   const { page, disabled } = props;
@@ -41,31 +44,34 @@ function ButtomBack(props) {
 
 export default function Lista({ match }) {
   const [lista, setLista] = useState([]);
-  const [listVisible, setListVisible] = useState([]);
   const [page, setPage] = useState(1);
-  const [perPage, setPerPage] = useState(2);
+  const [lastPage, setlastPage] = useState(1);
+  const [perPage, setPerPage] = useState(10);
   const [modalVisible, setModalVisible] = useState(false);
-  const [emailAtual, setEmailAtual] = useState('');
+  const [atividadeAtual, setAtividadeAtual] = useState('');
+  const history = useHistory();
 
-  const quantPagina = lista.length / perPage;
-
-  function handleEdit(email) {
-    alert(`Editar: ${email}`);
+  function handleEdit(id) {
+    alert(`Editar: ${id}`);
   }
 
   function handleDelete() {
-    let l = [];
-    for (const u of lista) {
-      if (u.email !== emailAtual) {
-        l = [...l, u];
-      }
-    }
-    setLista([...l]);
+    api.post(`/atividade/delete/${atividadeAtual}`).then(() => {
+      api.get(`atividade?page=${page}&limit=${perPage}`).then((response) => {
+        const { lastPage: last } = response.data;
+        setLista(response.data.data);
+        setlastPage(last);
+        if (page > last) {
+          setPage(last);
+          history.push(`/lista/${last}`);
+        }
+      });
+    });
   }
 
-  function handleOpenModal(email) {
+  function handleOpenModalDelete(atividade) {
     setModalVisible(true);
-    setEmailAtual(email);
+    setAtividadeAtual(atividade);
   }
 
   function handleChangePerPage(e) {
@@ -74,17 +80,16 @@ export default function Lista({ match }) {
   }
 
   useEffect(() => {
-    const allUser = lista;
-    const initialUser = (page - 1) * perPage;
-
-    let exibir = [];
-
-    for (let i = initialUser; (i < allUser.length) && (i < initialUser + perPage); i += 1) {
-      exibir = [...exibir, allUser[i]];
-    }
-
-    setListVisible(exibir);
-  }, [page, perPage, lista]);
+    api.get(`atividade?page=${page}&limit=${perPage}`).then((response) => {
+      const { lastPage: last } = response.data;
+      setLista(response.data.data);
+      setlastPage(last);
+      if (page > last) {
+        setPage(last);
+        history.push(`/lista/${last}`);
+      }
+    });
+  }, [page, perPage, history]);
 
   useEffect(() => {
     const pageQuery = Number.parseInt(match.params.page, 10);
@@ -98,19 +103,7 @@ export default function Lista({ match }) {
     } else {
       setPage(1);
     }
-    setLista(JSON.parse(localStorage.getItem('usuarios')));
   }, [match.params.page]);
-
-  useEffect(() => {
-    const perPageStorage = localStorage.getItem('perPage');
-    if (perPageStorage) {
-      setPerPage(Number.parseInt(perPageStorage, 10));
-      const select = document.getElementById('selectPerPage');
-      select.value = perPage;
-    }
-
-    localStorage.setItem('usuarios', JSON.stringify(lista));
-  }, [lista, perPage]);
 
   return (
     <Bg>
@@ -127,44 +120,46 @@ export default function Lista({ match }) {
       <Container>
         <Link to="/login">
           <IoIosArrowRoundBack size={30} />
-          {' '}
-            Voltar
+          Voltar
         </Link>
-        <h1>Lean lista</h1>
+        <h1>Listade Atividades</h1>
 
         <div className="animation">
           <label>Quantidade por página</label>
-          <select onChange={handleChangePerPage} id="selectPerPage">
-            <option value={2}>2</option>
-            <option value={3}>3</option>
-            <option value={4}>4</option>
+          <select onChange={handleChangePerPage} id="selectPerPage" defaultValue={10}>
             <option value={5}>5</option>
             <option value={10}>10</option>
             <option value={15}>15</option>
-            <option value={20}>20</option>
           </select>
         </div>
 
         <List>
           <li>
-            <span><strong>#Email</strong></span>
-            <span><strong>Nome</strong></span>
-            <span><strong>CPF</strong></span>
-            <span><strong>Telefone</strong></span>
-            <button type="button" disabled>
-              <IoMdMore size={20} />
-            </button>
+            <Cell flex={1}><strong>ID</strong></Cell>
+            <Cell flex={3}><strong>Descrição</strong></Cell>
+            <Cell flex={3}><strong>Data</strong></Cell>
+            <Cell flex={2}><strong>ID Projeto</strong></Cell>
+            <Cell flex={1}>
+              <IoMdMore size={15} />
+            </Cell>
           </li>
           {
-            listVisible.map((usuario) => (
-              <li key={usuario.email}>
-                <span onClickCapture={() => handleEdit(usuario.email)}>{usuario.email}</span>
-                <span onClickCapture={() => handleEdit(usuario.email)}>{usuario.name}</span>
-                <span onClickCapture={() => handleEdit(usuario.email)}>{usuario.cpf}</span>
-                <span onClickCapture={() => handleEdit(usuario.email)}>{usuario.phone}</span>
-                <button type="button" onClick={() => handleOpenModal(usuario.email)}>
-                  <IoMdTrash size={22} />
-                </button>
+            lista.map((at) => (
+              <li key={at.id}>
+                <Cell flex={1} onClickCapture={() => handleEdit(at.id)}>{at.id}</Cell>
+                <Cell flex={3}>{at.descricao}</Cell>
+                <Cell flex={3}>{at.dataCadastro}</Cell>
+                <Cell flex={2}>{at.idProjeto}</Cell>
+                <Cell flex={1}>
+                  <ButtonOpt background="#00f">
+                    <FaPencilAlt size={18} />
+                  </ButtonOpt>
+                  <ButtonOpt background="#f00" onClick={() => handleOpenModalDelete(at.id)}>
+                    <IoMdTrash size={22} />
+                  </ButtonOpt>
+                </Cell>
+
+
               </li>
             ))
           }
@@ -173,9 +168,9 @@ export default function Lista({ match }) {
         <div id="divPagination" className="animation2">
           <ButtomBack page={page - 1} disabled={page < 2} />
           <label>
-            {`Página ${page} de ${Math.ceil(quantPagina)}`}
+            {`Página ${page} de ${lastPage}`}
           </label>
-          <ButtomNext page={page + 1} disabled={page >= (lista.length / perPage)} />
+          <ButtomNext page={page + 1} disabled={page >= lastPage} />
         </div>
 
       </Container>

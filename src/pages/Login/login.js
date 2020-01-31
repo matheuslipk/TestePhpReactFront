@@ -8,16 +8,11 @@ import {
 } from './style';
 
 // Usando hook useHistory
-function BtnEntrar({ email }) {
+function BtnEntrar() {
   const history = useHistory();
 
   function handleClick() {
-    const lista = JSON.parse(localStorage.getItem('usuarios'));
-    for (const u of lista) {
-      if (u.email === email) {
-        history.push('/lista');
-      }
-    }
+    history.push('/lista');
   }
 
   return (
