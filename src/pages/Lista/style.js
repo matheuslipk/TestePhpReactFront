@@ -191,6 +191,15 @@ export const ButtonPag = styled.button.attrs({
     }
 `;
 
+
+export const ButtonPovoarBanco = styled.button`
+  background: #a00a;
+  color: #fff;
+  padding: 10px;
+  border: none;
+
+`;
+
 export const ButtonLink = styled.button.attrs({
   type: 'button',
 })`

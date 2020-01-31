@@ -16,7 +16,8 @@ export default function NovaAtividade({ location }) {
       idProjeto,
     }).then((response) => {
       if (response.data.success) {
-        toast.success('Atividade atualizada com sucesso');
+        toast.success('Atividade Criada com sucesso');
+        setDesc('');
       } else {
         toast.error(`Erro: ${response.data.msg}`);
       }

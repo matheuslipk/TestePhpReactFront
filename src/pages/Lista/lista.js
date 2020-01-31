@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import {
   IoIosArrowBack, IoIosArrowForward, IoMdTrash, IoMdMore,
-  IoIosArrowRoundBack, IoIosAdd,
+  IoIosAdd, IoIosHome,
 } from 'react-icons/io';
 
 import { FaPencilAlt } from 'react-icons/fa';
 
-import { useHistory, Link } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import {
-  Container, List, ButtonPag, Bg, Modal, ButtonOpt, Cell, ButtonLink,
+  Container, List, ButtonPag, Bg, Modal, ButtonOpt, Cell, ButtonLink, ButtonPovoarBanco,
 } from './style';
 import api from '../../services/api';
 
@@ -91,6 +92,16 @@ export default function Lista({ match }) {
     return null;
   }
 
+  function registerActivities() {
+    api.get('/principal/povoar').then((response) => {
+      if (response.data.sucess) {
+        toast.success('As atividades foram cadastradas');
+      }
+    }).catch((err) => {
+      toast.error('Erro: ', err.message);
+    });
+  }
+
   useEffect(() => {
     api.get('projeto').then((response) => {
       setProjetos(response.data);
@@ -137,10 +148,10 @@ export default function Lista({ match }) {
       </Modal>
       <Container>
         <div className="header">
-          <Link to="/login">
-            <IoIosArrowRoundBack size={30} />
-          Voltar
-          </Link>
+          <ButtonLink onClick={() => history.push('/')}>
+            <IoIosHome size={25} />
+            Home
+          </ButtonLink>
 
           <ButtonLink onClick={() => history.push('/atividade/create', { projetos })}>
             Nova Atividade
@@ -190,13 +201,12 @@ export default function Lista({ match }) {
                       <IoMdTrash size={22} />
                     </ButtonOpt>
                   </Cell>
-
-
                 </li>
               );
             })
           }
         </List>
+
 
         <div id="divPagination" className="animation2">
           <ButtomBack page={page - 1} disabled={page < 2} />
