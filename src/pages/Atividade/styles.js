@@ -39,12 +39,19 @@ export const Form = styled.form`
     input{
       /* padding: 5px; */
     }
+
+  
+    
+
   }
 `;
 
 export const ButtonHandleSubmit = styled.button.attrs({
   type: 'submit',
 })`
+  display: flex;
+  justify-content: center;
+  align-items: center;
   padding: 10px;
   margin-top: 20px;
   background: #afa;
@@ -55,5 +62,20 @@ export const ButtonHandleSubmit = styled.button.attrs({
   &:hover{
     background: #8d8;
   }
+
+  @keyframes mymove {
+    from {
+      transform: rotate();
+    }
+
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  & svg {
+    animation: mymove 1s infinite linear;
+  }
+  
 
 `;

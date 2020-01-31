@@ -53,6 +53,8 @@ export const Container = styled.div`
     }
   }
 
+  
+
   .animation{
     animation: TransformAnimation 0.25s alternate;
     animation-iteration-count: 2;

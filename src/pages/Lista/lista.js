@@ -7,9 +7,8 @@ import {
 import { FaPencilAlt } from 'react-icons/fa';
 
 import { useHistory } from 'react-router-dom';
-import { toast } from 'react-toastify';
 import {
-  Container, List, ButtonPag, Bg, Modal, ButtonOpt, Cell, ButtonLink, ButtonPovoarBanco,
+  Container, List, ButtonPag, Bg, Modal, ButtonOpt, Cell, ButtonLink,
 } from './style';
 import api from '../../services/api';
 
@@ -90,16 +89,6 @@ export default function Lista({ match }) {
       }
     }
     return null;
-  }
-
-  function registerActivities() {
-    api.get('/principal/povoar').then((response) => {
-      if (response.data.sucess) {
-        toast.success('As atividades foram cadastradas');
-      }
-    }).catch((err) => {
-      toast.error('Erro: ', err.message);
-    });
   }
 
   useEffect(() => {

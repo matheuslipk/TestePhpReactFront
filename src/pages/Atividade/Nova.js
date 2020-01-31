@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { toast } from 'react-toastify';
+import { IoMdRefresh } from 'react-icons/io';
 import api from '../../services/api';
 import { Bg, Form, ButtonHandleSubmit } from './styles';
 
@@ -7,10 +8,12 @@ export default function NovaAtividade({ location }) {
   const { state } = location;
   const { projetos } = state;
   const [desc, setDesc] = useState('');
+  const [loading, setLoading] = useState(false);
   const [idProjeto, setIdProjeto] = useState(5);
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    setLoading(true);
     api.post('/atividade/create', {
       descricao: desc,
       idProjeto,
@@ -21,8 +24,10 @@ export default function NovaAtividade({ location }) {
       } else {
         toast.error(`Erro: ${response.data.msg}`);
       }
+      setLoading(false);
     }).catch((err) => {
       toast.error(`Erro: ${err.message}`);
+      setLoading(false);
     });
   };
 
@@ -46,8 +51,10 @@ export default function NovaAtividade({ location }) {
             }
           </select>
         </div>
-        <ButtonHandleSubmit>
-           Salvar
+        <ButtonHandleSubmit className="rotate" disabled={loading}>
+          {
+            loading ? <IoMdRefresh size={30} /> : 'Salvar'
+          }
         </ButtonHandleSubmit>
       </Form>
     </Bg>
