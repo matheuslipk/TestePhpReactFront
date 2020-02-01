@@ -1,14 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import {
   IoIosArrowBack, IoIosArrowForward, IoMdTrash, IoMdMore,
-  IoIosAdd, IoIosHome,
+  IoIosAdd, IoIosHome, IoIosSearch,
 } from 'react-icons/io';
 
 import { FaPencilAlt } from 'react-icons/fa';
 
 import { useHistory } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import {
-  Container, List, ButtonPag, Bg, Modal, ButtonOpt, Cell, ButtonLink,
+  Container, List, ButtonPag, Bg, Modal, ButtonOpt, Cell,
+  ButtonLink, InputSearch, Search,
 } from './style';
 import api from '../../services/api';
 
@@ -52,10 +54,24 @@ export default function Lista({ match }) {
   const [perPage, setPerPage] = useState(10);
   const [modalVisible, setModalVisible] = useState(false);
   const [atividadeAtual, setAtividadeAtual] = useState('');
+  const [idSearch, setIdSearch] = useState('');
   const history = useHistory();
 
-  function handleEdit(id) {
-    alert(`Editar: ${id}`);
+  function handleSearchAtividade() {
+    api.get(`/atividade/get/${idSearch}`).then((response) => {
+      if (!response.data[0]) {
+        toast.error('Atividade não encontrada');
+        return;
+      }
+      setLista(response.data);
+    });
+  }
+
+  function dateFormmated(dateSql) {
+    const date = new Date(dateSql);
+    const dateF = `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
+    const time = `${date.getHours()}:${date.getMinutes() + 1}:${date.getSeconds()}`;
+    return `${dateF} - ${time}`;
   }
 
   function handleDelete() {
@@ -127,12 +143,11 @@ export default function Lista({ match }) {
     <Bg>
       <Modal visible={modalVisible} onClick={() => setModalVisible(false)}>
         <div>
-          <h3>Tem certeza que deseja continuar?</h3>
+          <h3>Deseja apagar essa atividade?</h3>
           <div>
             <button type="button" onClick={handleDelete}>Sim</button>
             <button type="button">Não</button>
           </div>
-
         </div>
       </Modal>
       <Container>
@@ -148,23 +163,37 @@ export default function Lista({ match }) {
           </ButtonLink>
         </div>
 
-
         <h1>Listade Atividades</h1>
 
-        <div className="animation">
-          <label>Quantidade por página</label>
-          <select onChange={handleChangePerPage} id="selectPerPage" defaultValue={10}>
-            <option value={5}>5</option>
-            <option value={10}>10</option>
-            <option value={15}>15</option>
-          </select>
+        <div className="header">
+          <Search>
+            <InputSearch
+              placeholder="Pesquise por ID"
+              type="number"
+              value={idSearch}
+              onChange={(e) => setIdSearch(e.target.value)}
+            />
+            <ButtonLink onClick={handleSearchAtividade}>
+              <IoIosSearch size={25} />
+            </ButtonLink>
+          </Search>
+
+          <div>
+            <label>Quantidade por página</label>
+            <select onChange={handleChangePerPage} id="selectPerPage" defaultValue={10}>
+              <option value={5}>5</option>
+              <option value={10}>10</option>
+              <option value={15}>15</option>
+            </select>
+          </div>
+
         </div>
 
         <List>
           <li>
             <Cell flex={1}><strong>ID</strong></Cell>
             <Cell flex={3}><strong>Descrição</strong></Cell>
-            <Cell flex={3}><strong>Data</strong></Cell>
+            <Cell flex={3}><strong>Data Cadastro</strong></Cell>
             <Cell flex={2}><strong>ID Projeto</strong></Cell>
             <Cell flex={1}>
               <IoMdMore size={15} />
@@ -175,9 +204,9 @@ export default function Lista({ match }) {
               const projeto = getProjectById(at.idProjeto);
               return (
                 <li key={at.id}>
-                  <Cell flex={1} onClickCapture={() => handleEdit(at.id)}>{at.id}</Cell>
+                  <Cell flex={1}>{at.id}</Cell>
                   <Cell flex={3}>{at.descricao}</Cell>
-                  <Cell flex={3}>{at.dataCadastro}</Cell>
+                  <Cell flex={3}>{dateFormmated(at.dataCadastro)}</Cell>
                   <Cell flex={2}>{projeto && projeto.descricao}</Cell>
                   <Cell flex={1}>
                     <ButtonOpt

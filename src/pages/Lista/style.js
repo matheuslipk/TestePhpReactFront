@@ -95,6 +95,23 @@ export const Container = styled.div`
   }
 `;
 
+export const Search = styled.div`  
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  /* border: 1px solid; */
+`;
+
+export const InputSearch = styled.input`  
+  display: flex;
+  flex: 1;
+  padding: 10px;
+  border: none;
+  border-bottom-left-radius: 5px;
+  border-top-left-radius: 5px;
+`;
+
+
 export const List = styled.ul`
   list-style: none;
   flex: 1;
@@ -193,15 +210,6 @@ export const ButtonPag = styled.button.attrs({
     }
 `;
 
-
-export const ButtonPovoarBanco = styled.button`
-  background: #a00a;
-  color: #fff;
-  padding: 10px;
-  border: none;
-
-`;
-
 export const ButtonLink = styled.button.attrs({
   type: 'button',
 })`
@@ -209,9 +217,8 @@ export const ButtonLink = styled.button.attrs({
     justify-content: center;
     align-items: center;
     color: #fff;
-    align-self: flex-start;
     font-weight: bold;
-    background: #40c8f4;
+    background: #40c8f4aa;
     padding: 5px;
     border-radius: 5px;
     border: none;

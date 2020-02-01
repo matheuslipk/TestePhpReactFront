@@ -13,6 +13,7 @@ export default function NovaAtividade({ location }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (!idProjeto || !desc) return;
     setLoading(true);
     api.post('/atividade/create', {
       descricao: desc,
